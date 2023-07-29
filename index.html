@@ -4,89 +4,86 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simón dice</title>
+    <meta name="description" content="Juego de Simón Dice para entrenar y ejercitar la memoria. Intenta memorizar y reproducir la serie de teclas iluminadas.">
+    <meta name="keywords" content="Simón Dice, juego, memoria, diversión">
+    <title>Simón Dice</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link href="styles.css" rel="stylesheet" />
     <script src="script.js" type="text/javascript" defer></script>
 </head>
-<header>
-    <h1 class="title">SIMON DICE</h1>
-    <nav class="navbar">
-      <ul class="nav-list">
-        <li class="nav-item"><a href="#">Inicio</a></li>
-        <li class="nav-item"><a href="#">Juego</a></li>
-        <li class="nav-item"><a href="#">Acerca de</a></li>
-        <li class="nav-item"><a href="#contacto">Contacto</a></li>
-      </ul>
-      <img id="configIcon" src="..//simon-dice-main/exclamacion.png" alt="Configuración">
-      <img id="darkModeButton" src="..//simon-dice-main/brillo-y-contraste.png" alt="Modo Oscuro">
-    </nav>
-  </header>
- <br>
- <br> 
- <br>
- <br> 
-<body>  
-</div> 
-    <div class="simon">
-        <br>
-        <br>
-        <button id="startButton">Start</button>
-        <div class="buttonContainer">
-            <div class="square red"></div>
-            <div class="square yellow"></div>
-            <div class="square blue"></div>
-            <div class="square green"></div>
+<body> 
+    <header>
+        <h1 class="title">SIMON DICE</h1>
+        <nav class="navbar">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="index.html">Inicio</a></li>
+                <li class="nav-item"><a href="#">Juegos</a></li>
+                <li class="nav-item"><a href="#">Acerca de</a></li>
+                <li class="nav-item"><a href="contacto.html">Contacto</a></li>
+            </ul>
+            <img id="configIcon" src="..//simon-dice-main/exclamacion.png" alt="Configuración">
+            <img id="ranking" src="..//simon-dice-main/brillo-y-contraste.png" alt="ranking lista">
+        </nav>
+    </header>
+    <main>
+        <div class="simon">
+            <br>
+            <br>
+            <button id="startButton">Start</button>
+            <div class="buttonContainer">
+                <div class="square red"></div>
+                <div class="square yellow"></div>
+                <div class="square blue"></div>
+                <div class="square green"></div>
+            </div>
+            <div id="round"></div>
+            <div id="score"></div>
+            <div id="timer"></div>
+            <br>
+            <br>
+            <div id="record"></div>
         </div>
-        <div id="round"></div>
-        <div id="score">Puntaje: 0</div>
-        <div id="timer"></div> 
-        <br>
-        <br>
-        <div id="record"></div>
-    </div> 
-    <div id="modalContainer" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <h2>INFORMACIÓN DEL JUEGO</h2>
-          <p>- El juego de Simón es un excelente juego de memoria para entrenar y ejercitar su memoria. Una práctica regular, permite mejorar tu memoria mientras que divertirse. Es un excelente y famoso juego de memoria. La serie de teclas iluminadas se genera aleatoriamente, por eso el juego es infinito y puedes jugar tantas veces como quieras.</p>
-          <br>
-          <h2>CONTROLES DEL JUEGO</h2>
-          <p>- En el juego de Simón, intenta memorizar la serie de teclas iluminadas y reproducirla, en cada paso se agrega una nueva clave a la serie y el juego se vuelve más difícil. El juego termina cuando el jugador comete el primer error (cuando el jugador presiona la tecla iluminada incorrecta).
-            El propósito del juego es reproducir las series más largas de colores generados aleatoriamente por el juego.</p>
+        <div id="modalContainer" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>INFORMACIÓN DEL JUEGO</h2>
+                <p>- El juego de Simón es un excelente juego de memoria para entrenar y ejercitar su memoria. Una práctica regular, permite mejorar tu memoria mientras que divertirse. Es un excelente y famoso juego de memoria. La serie de teclas iluminadas se genera aleatoriamente, por eso el juego es infinito y puedes jugar tantas veces como quieras.</p>
+                <br>
+                <h2>CONTROLES DEL JUEGO</h2>
+                <p>- En el juego de Simón, intenta memorizar la serie de teclas iluminadas y reproducirla, en cada paso se agrega una nueva clave a la serie y el juego se vuelve más difícil. El juego termina cuando el jugador comete el primer error (cuando el jugador presiona la tecla iluminada incorrecta).
+                    El propósito del juego es reproducir las series más largas de colores generados aleatoriamente por el juego.</p>
+            </div>
         </div>
-    </div> 
-    <div id="gameOverModal" class="modal">
-        <div class="modal-content">
-          <h2>GAME OVER</h2>
-          <p>Has perdido el juego. ¡Inténtalo de nuevo!</p>
-          <button id="restartButton">Reiniciar</button>
+        <div id="gameOverModal" class="modal">
+            <div class="modal-content">
+                <h2>GAME OVER</h2>
+                <p>Has perdido el juego. ¡Inténtalo de nuevo!</p>
+                <p id="modalRound">Ronda: </p>
+                <p id="modalScore">Puntaje: </p>
+                <p id="modalTimer">Tiempo: </p>
+                <button id="restartButton">Reiniciar</button>
+            </div>
         </div>
-      </div>
-</body>
-<section id="contacto" class="contact-section">
-  <div class="contact-form">
-    <h2>Formulario de Contacto</h2>
-    <form id="contactForm">
-      <input type="text" id="name" name="name" placeholder="Nombre" required>
-      <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
-      <textarea id="message" name="message" placeholder="Mensaje" required></textarea>
-      <div class="error-message" id="errorMessage"></div>
-      <button type="submit">Enviar</button>
-    </form>
-  </div>
-</section>
+        <div id="rankingModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>RANKING</h2>
+                <ul id="rankingList"></ul>
+            </div>
+        </div>
+    </main>
     <footer>
         <div class="footer-info">
-          <p>Hecho por Fabricio Diaz</p>
+            <p>Hecho por Fabricio Diaz</p>
         </div>
         <div class="social-links">
-          <a href="#"><i class="fab fa-facebook"></i></a>
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="https://github.com/Fabri1889/simondice.github.io" target="_blank"><i class="fab fa-github"></i></a>
         </div>
-      </footer>
+    </footer>
+</body>
 </html>
