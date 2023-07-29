@@ -1,128 +1,50 @@
-// Obtiene referencias a los elementos del DOM
-var round = document.getElementById('round');
 var simonButtons = document.getElementsByClassName('square');
 var startButton = document.getElementById('startButton');
+var round = document.getElementById('round');
 var timerDisplay = document.getElementById('timer');
 var userName = '';
 
 function Simon(simonButtons, startButton, round) {
   this.round = 0;
   this.userPosition = 0;
-  this.totalRounds = 999;
+  this.totalRounds = 9999; 
   this.sequence = [];
-  this.speed = 1000;
-  this.blockedButtons = true;
-  this.buttons = Array.prototype.slice.call(simonButtons);
+  this.speed = 1000; 
+  this.blockedButtons = true; 
+  this.buttons = Array.prototype.slice.call(simonButtons); 
   this.display = {
     startButton: startButton,
     round: round
   };
-  this.timerInterval = null;
-  this.timerCount = 0;
-  this.highestRound = 0;
+  this.timerInterval = null; 
+  this.timerCount = 0; 
+  this.highestRound = 0; 
   this.score = 0; 
+  this.penalty = 5; 
+  this.startTime = null; 
+  this.penaltyPerSecond = 0.1; 
 
-  // Obtenemos el record más alto almacenado en el localstorage
+  // Recuperar el récord almacenado en localStorage si existe
   var storedHighestRound = localStorage.getItem('highestRound');
   if (storedHighestRound) {
     this.highestRound = parseInt(storedHighestRound, 10);
   }
 
-  // Mostramos el record más alto en el elemento de visible
-  var recordDisplay = document.getElementById('record');
-  recordDisplay.textContent = 'Récord: ' + this.highestRound;
+  // Mostrar el récord en el elemento con id 'record'
+  document.getElementById('record').textContent = 'Récord: ' + this.highestRound;
 }
 
-
-// Agregar la función para abrir el formulario de contacto
-function openContactForm() {
-  var contactFormSection = document.getElementById('contacto');
-  contactFormSection.style.display = 'block';
-
-  var overlay = document.getElementById('overlay');
-  overlay.style.display = 'block'; 
-}
-
-var contactLink = document.querySelector('a[href="#contacto"]');
-contactLink.addEventListener('click', function(event) {
-  event.preventDefault();
-  openContactForm();
-});
-
-// Agregar la función para cerrar el formulario de contacto
-function closeContactForm() {
-  var contactFormSection = document.getElementById('contacto');
-  contactFormSection.style.display = 'none';
-
-  var overlay = document.getElementById('overlay');
-  overlay.style.display = 'none'; 
-}
-
-// Cerrar el formulario de contacto al hacer clic en el botón "Enviar"
-var contactForm = document.getElementById('contactForm');
-contactForm.addEventListener('submit', function(event) {
-  event.preventDefault();
-  if (validateForm()) {
-    var name = document.getElementById('name').value;
-    var email = document.getElementById('email').value;
-    var message = document.getElementById('message').value;
-    var mailtoLink = 'mailto:tu_correo@example.com' + '?subject=Contacto desde la página web&body=' + encodeURIComponent('Nombre: ' + name + '\nCorreo electrónico: ' + email + '\nMensaje: ' + message);
-    window.location.href = mailtoLink;
-
-    
-    closeContactForm();
-  }
-});
-
-// Función para validar el formulario de contacto
-function validateForm() {
-  var name = document.getElementById('name').value;
-  var email = document.getElementById('email').value;
-  var message = document.getElementById('message').value;
-  var errorMessage = document.getElementById('errorMessage');
-
-  if (!name.trim() || !email.trim() || !message.trim()) {
-    errorMessage.textContent = 'Por favor, complete todos los campos.';
-    errorMessage.style.display = 'block';
-    return false;
-  } else if (!isValidEmail(email)) {
-    errorMessage.textContent = 'Por favor, ingrese una dirección de correo electrónico válida.';
-    errorMessage.style.display = 'block';
-    return false;
-  } else if (message.length < 5) {
-    errorMessage.textContent = 'El mensaje debe contener al menos 5 caracteres.';
-    errorMessage.style.display = 'block';
-    return false;
-  }
-
-  errorMessage.style.display = 'none';
-  return true;
-}
-
-// Función para validar el formato del correo electrónico
-function isValidEmail(email) {
-  var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-
+// Función para validar el nombre de usuario ingresado
 function validateUserName(name) {
-  if (name.length >= 3) {
-    return true;
-  } else {
-    return false;
-  }
+  return name.length >= 3;
 }
 
-// Inicializamos la instancia de Simon
+// Inicialización del juego Simon
 Simon.prototype.init = function() {
   var self = this;
-  
   this.display.startButton.onclick = function() {
-    
+    // Solicitar y validar el nombre de usuario
     userName = prompt('Por favor, ingresa tu nombre de usuario:');
-    
-    
     if (validateUserName(userName)) {
       self.startGame();
     } else {
@@ -131,108 +53,95 @@ Simon.prototype.init = function() {
   };
 };
 
-
-
-
-var simon = new Simon(simonButtons, startButton, round);
-simon.init();
-
-
+// Función para iniciar el juego
 Simon.prototype.startGame = function() {
   var self = this;
-  
   this.display.startButton.classList.add('hidden');
   this.display.startButton.disabled = true;
-  this.updateRound(0);
+  this.updateRound(0); 
   this.userPosition = 0;
   this.sequence = this.createSequence();
-  
-  Array.prototype.forEach.call(this.buttons, function(element, i) {
+  this.buttons.forEach(function(element, i) {
     element.classList.remove('winner');
     element.onclick = function() {
       self.buttonClick(i);
     };
   });
-
-  this.showSequence();
-  this.startTimer();
-  this.updateScoreDisplay();
+  this.showSequence(); 
+  this.startTimer(); 
+  this.updateScoreDisplay(); 
 };
 
-// Actualizamos el numero de ronda en la pantalla
+// Función para actualizar el número de ronda mostrado
 Simon.prototype.updateRound = function(value) {
   this.round = value;
   this.display.round.textContent = 'Round ' + this.round;
 };
 
-// Creamos una nueva secuencia de colores
+// Función para crear una nueva secuencia de colores
 Simon.prototype.createSequence = function() {
   var self = this;
+  // Generar una secuencia de colores aleatorios con la longitud total de rondas
   return Array.apply(null, new Array(this.totalRounds)).map(function() {
     return self.getRandomColor();
   });
 };
 
-// Obtenemos un color aleatorio
+// Función para obtener un color aleatorio
 Simon.prototype.getRandomColor = function() {
   return Math.floor(Math.random() * 4);
 };
 
-// Manejamos el evento click en los botones de colores
+// Función para manejar el clic en un botón de color
 Simon.prototype.buttonClick = function(value) {
   if (!this.blockedButtons) {
     this.validateChosenColor(value);
   }
 };
 
-// Validamos el color elegido por el usuario
+// Función para validar si el color elegido es correcto
 Simon.prototype.validateChosenColor = function(value) {
   if (!this.blockedButtons) {
     if (this.sequence[this.userPosition] === value) {
       if (this.round === this.userPosition) {
         this.updateRound(this.round + 1);
-        this.speed /= 1.02;
-        this.isGameOver();
+        this.speed /= 1.02; 
+        this.isGameOver(); 
       } else {
         this.userPosition++;
       }
-      this.score++;
-      this.updateScoreDisplay();
+      this.score++; 
+      this.updateScoreDisplay(); 
     } else {
       this.gameLost();
     }
   }
 };
 
-// Actualiza la visualización del puntaje en el elemento del DOM correspondiente
+// Función para mostrar el puntaje actual
 Simon.prototype.updateScoreDisplay = function() {
   var scoreDisplay = document.getElementById('score');
-  scoreDisplay.style.display = 'block'; 
+  scoreDisplay.style.display = 'block';
   scoreDisplay.textContent = 'Puntaje: ' + this.score;
 };
 
-// Agregar una función para ocultar el puntaje al inicio
+// Función para ocultar el puntaje
 Simon.prototype.hideScoreDisplay = function() {
   var scoreDisplay = document.getElementById('score');
   scoreDisplay.style.display = 'none';
 };
 
-// Crea una instancia de la clase Simon y la inicializa
-var simon = new Simon(simonButtons, startButton, round);
-simon.init();
-simon.hideScoreDisplay(); // Ocultar el puntaje al inicio
-
-// Verificamos si el juego ha terminado
+// Función para verificar si el juego ha terminado
 Simon.prototype.isGameOver = function() {
   if (this.round === this.totalRounds) {
-    this.gameWon();
+    this.gameWon(); 
   } else {
-    this.userPosition = 0;
-    this.showSequence();
+    this.userPosition = 0; 
+    this.showSequence(); 
   }
 };
 
-// Muestra la secuencia de colores
+// Función para mostrar la secuencia de colores
 Simon.prototype.showSequence = function() {
   var self = this;
   var sequenceIndex = 0;
@@ -244,18 +153,18 @@ Simon.prototype.showSequence = function() {
     }, self.speed / 2);
     sequenceIndex++;
     if (sequenceIndex > self.round) {
-      self.blockedButtons = false;
+      self.blockedButtons = false; 
       clearInterval(timer);
     }
   }, this.speed);
 };
 
-// Alterna el estilo del boton entre activo y desactivado
+// Función para alternar el estilo de un botón (cambiar de color)
 Simon.prototype.toggleButtonStyle = function(button) {
   button.classList.toggle('active');
 };
 
-// El juego se ha perdido
+// gameover
 Simon.prototype.gameLost = function() {
   this.display.startButton.classList.remove('hidden');
   this.display.startButton.disabled = false;
@@ -263,32 +172,64 @@ Simon.prototype.gameLost = function() {
   this.stopTimer();
   this.timerCount = 0;
   this.updateTimerDisplay();
-  this.score = 0;
-  this.updateScoreDisplay();
 
+  // Actualizar el récord si el puntaje actual es mayor que el récord almacenado
   if (this.round > this.highestRound) {
-    // Actualiza el récord más alto si la ronda actual es mayor que el récord anterior
     this.highestRound = this.round;
-
     localStorage.setItem('highestRound', this.highestRound.toString());
-
-    var recordDisplay = document.getElementById('record');
-    recordDisplay.textContent = 'Récord: ' + this.highestRound;
+    document.getElementById('record').textContent = 'Récord: ' + this.highestRound;
   }
 
-  // Mostrar el modal de "Game Over" y permitir reiniciar el juego
+  // Calcular el puntaje final teniendo en cuenta el tiempo transcurrido
+  var timeElapsed = Math.floor((Date.now() - this.startTime) / 1000);
+  var scoreWithPenalty = this.score - timeElapsed * this.penaltyPerSecond;
+  var finalScore = scoreWithPenalty >= 0 ? scoreWithPenalty : 0;
+
+  // Mostrar el modal de gameover con el puntaje y opciones para reiniciar o salir
   var gameOverModal = document.getElementById('gameOverModal');
   gameOverModal.style.display = 'block';
+
+  document.getElementById('modalRound').textContent = 'Ronda: ' + this.round;
+  document.getElementById('modalScore').textContent = 'Puntaje: ' + finalScore;
+  document.getElementById('modalTimer').textContent = 'Tiempo: ' + timeElapsed + 's';
 
   var restartButton = document.getElementById('restartButton');
   var self = this;
   restartButton.addEventListener('click', function() {
     gameOverModal.style.display = 'none';
-    self.resetGame();
+    self.resetGame(); 
   });
+
+  // Guardar los datos del juego en el historial de partidas
+  var gameData = {
+    username: userName,
+    score: finalScore,
+    round: this.round,
+    datetime: getCurrentDateTime(), 
+  };
+  saveGameData(gameData);
 };
 
-// Reinicia el juego
+// Función para obtener la fecha y hora actual en formato "YYYY-MM-DD HH:mm:ss"
+function getCurrentDateTime() {
+  var now = new Date();
+  var year = now.getFullYear();
+  var month = String(now.getMonth() + 1).padStart(2, '0');
+  var day = String(now.getDate()).padStart(2, '0');
+  var hours = String(now.getHours()).padStart(2, '0');
+  var minutes = String(now.getMinutes()).padStart(2, '0');
+  var seconds = String(now.getSeconds()).padStart(2, '0');
+  return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+}
+
+// Función para guardar los datos del juego en el historial de partidas en localStorage
+function saveGameData(gameData) {
+  var gameHistory = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+  gameHistory.push(gameData);
+  localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+}
+
+// Función para reiniciar el juego a su estado inicial
 Simon.prototype.resetGame = function() {
   var self = this;
   this.updateRound(0);
@@ -296,16 +237,18 @@ Simon.prototype.resetGame = function() {
   this.sequence = [];
   this.speed = 1000;
   this.blockedButtons = true;
-  Array.prototype.forEach.call(this.buttons, function(element) {
+  this.score = 0;
+  this.buttons.forEach(function(element) {
     element.classList.remove('winner');
   });
+  this.startGame(); 
 };
 
-// game won
+// win
 Simon.prototype.gameWon = function() {
   this.display.startButton.disabled = false;
   this.blockedButtons = true;
-  Array.prototype.forEach.call(this.buttons, function(element) {
+  this.buttons.forEach(function(element) {
     element.classList.add('winner');
   });
   this.stopTimer();
@@ -313,37 +256,135 @@ Simon.prototype.gameWon = function() {
   this.updateTimerDisplay();
 };
 
-// Inicia el temporizador
+// Función para actualizar el temporizador y el puntaje mostrados
+Simon.prototype.updateTimerAndScoreDisplay = function() {
+  var minutes = Math.floor(this.timerCount / 60);
+  var seconds = this.timerCount % 60;
+  timerDisplay.textContent = 'Time: ' + minutes + 'm ' + seconds + 's';
+
+  var timeElapsed = Math.floor((Date.now() - this.startTime) / 1000);
+  var scoreWithPenalty = this.score - timeElapsed * this.penaltyPerSecond;
+
+  var scoreDisplay = document.getElementById('score');
+  scoreDisplay.style.display = 'block';
+  scoreDisplay.textContent = 'Puntaje: ' + (scoreWithPenalty >= 0 ? scoreWithPenalty : 0);
+};
+
+// Función para iniciar el temporizador
 Simon.prototype.startTimer = function() {
   var self = this;
   this.timerInterval = setInterval(function() {
     self.timerCount++;
-    self.updateTimerDisplay();
+    self.updateTimerAndScoreDisplay();
   }, 1000);
+  this.startTime = Date.now();
 };
 
-// Detiene el temporizador
+// Función para detener el temporizador
 Simon.prototype.stopTimer = function() {
   clearInterval(this.timerInterval);
 };
 
-// Actualiza la visualizacion del temporizador
+// Función para actualizar el temporizador mostrado
 Simon.prototype.updateTimerDisplay = function() {
   var minutes = Math.floor(this.timerCount / 60);
   var seconds = this.timerCount % 60;
   timerDisplay.textContent = 'Time: ' + minutes + 'm ' + seconds + 's';
 };
 
-// Crea una instancia de la clase Simon y la inicializa
+// Crear una instancia de la clase Simon y comenzar el juego
 var simon = new Simon(simonButtons, startButton, round);
 simon.init();
+simon.hideScoreDisplay();
 
-// Manejo de eventos del boton de configuracion, modal y modo oscuro
+// Agregar un manejador de eventos al elemento con id 'ranking' para mostrar el historial de partidas
+var ranking = document.getElementById('ranking');
+ranking.addEventListener('click', function() {
+  showRanking();
+});
+
+// Función para mostrar el historial de partidas en un modal
+function showRanking() {
+  var rankingModal = document.getElementById('rankingModal');
+  var rankingList = document.getElementById('rankingList');
+
+  var gameHistory = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+
+  var sortBy = document.getElementById('sortBySelect').value;
+
+  // Ordenar el historial de partidas
+  if (sortBy === 'puntaje') {
+    gameHistory.sort(function(a, b) {
+      return b.score - a.score;
+    });
+  } else if (sortBy === 'fecha') {
+    gameHistory.sort(function(a, b) {
+      return new Date(b.datetime) - new Date(a.datetime);
+    });
+  }
+
+  rankingList.innerHTML = '';
+
+  for (var i = 0; i < gameHistory.length; i++) {
+    var gameData = gameHistory[i];
+    var listItem = document.createElement('li');
+    listItem.textContent =
+      'Jugador: ' +
+      gameData.username +
+      ', Puntaje: ' +
+      gameData.score +
+      ', Ronda: ' +
+      gameData.round +
+      ', Fecha: ' +
+      gameData.datetime;
+    rankingList.appendChild(listItem);
+  }
+
+  rankingModal.style.display = 'block'; 
+};
+
+// Agregar un manejador de eventos para cerrar el modal ranking
+var ranking = document.getElementById('ranking');
+var rankingModal = document.getElementById('rankingModal');
+var rankingCloseButton = rankingModal.querySelector('.close');
+
+ranking.addEventListener('click', function() {
+  rankingModal.style.display = 'block';
+});
+
+rankingCloseButton.addEventListener('click', function() {
+  rankingModal.style.display = 'none';
+});
+
+window.addEventListener('click', function(event) {
+  if (event.target === rankingModal) {
+    rankingModal.style.display = 'none';
+  }
+});
+
+// Crear un elemento select para permitir al usuario elegir entre puntaje o fecha
+var sortBySelect = document.createElement('select');
+sortBySelect.id = 'sortBySelect';
+var sortByOptions = ['puntaje', 'fecha'];
+for (var i = 0; i < sortByOptions.length; i++) {
+  var option = document.createElement('option');
+  option.value = sortByOptions[i];
+  option.textContent = sortByOptions[i].charAt(0).toUpperCase() + sortByOptions[i].slice(1);
+  sortBySelect.appendChild(option);
+}
+
+var rankingModalContent = rankingModal.querySelector('.modal-content');
+rankingModalContent.insertBefore(sortBySelect, rankingModalContent.firstChild);
+
+// Agregar un manejador de eventos al elemento select para actualizar al cambiar 
+sortBySelect.addEventListener('change', function() {
+  showRanking();
+});
+
+// Agregar manejadores de eventos para mostrar y ocultar el menú de configuración
 var configButton = document.getElementById('configIcon');
 var modal = document.getElementById('modalContainer');
 var closeButton = document.getElementsByClassName('close')[0];
-var darkModeButton = document.getElementById('darkModeButton');
-var body = document.body;
 
 configButton.addEventListener('click', function() {
   modal.style.display = 'block';
@@ -359,23 +400,10 @@ window.addEventListener('click', function(event) {
   }
 });
 
-darkModeButton.addEventListener('click', function() {
-  body.classList.toggle('dark-mode');
-});
-
-// Manejo de eventos del navar en celulares
+// Agregar un manejador de eventos para el botón de menú en celulares
 var navbarToggle = document.getElementById('navbar-toggle');
 var navbarMenu = document.getElementById('nav-menu');
 
 navbarToggle.addEventListener('click', function() {
   navbarMenu.classList.toggle('show');
 });
-
-// Función para validar el nombre ingresado
-function isValidName(name) {
-  return name.length >= 3;
-}
-
-
-
-
